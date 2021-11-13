@@ -88,9 +88,11 @@ class FaceRec:
 
         predictions = predict("hi", img, model_path="trained_knn_model.clf")
         # k = cv2.waitKey(100) & 0xff  # Press 'ESC' for exiting video
-        print(predictions)
+        # print(predictions)
 
         match = ""
+        faceData = {"name":[], "top":[], "bottom":[], "left":[], "right":[]}
+        i = 0
         for name, (top, right, bottom, left) in predictions:
             if len(predictions) > 1 and predictions[0][0] == predictions[1][0]:
                 match = "Match"
@@ -99,8 +101,13 @@ class FaceRec:
             # cv2.rectangle(img, (top,bottom), (left,right), (255,0,0), 2)
             # ret, buffer = cv2.imencode('.jpg', img)
             # img = buffer.tobytes()
-            
-            return { 'name' : name, 'top' : top, 'bottom' : bottom, 'left' : left, 'right' : right }
+            faceData["name"].append(name)
+            faceData["top"].append(top)
+            faceData["bottom"].append(bottom)
+            faceData["left"].append(left)
+            faceData["right"].append(right)
+            i+=1
+        return faceData
             
             # cv2.putText(
             #         img, 

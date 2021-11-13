@@ -1,6 +1,7 @@
 import React, { useState, styles} from 'react';
 import axios from 'axios';
 import Webcam from 'react-webcam';
+import ReactDOM from 'react-dom';
 
 const WebcamCapture = () => {
   const webcamRef = React.useRef(null);
@@ -20,9 +21,11 @@ const WebcamCapture = () => {
     right: 0,
   })
   const[name, setName] = useState("")
+  const[matching,setMatching] = useState("")
 
   const train = React.useCallback(() => {
     setStatus('Train Model')
+    setName('')
     setRe('training...')
     axios.get('http://127.0.0.1:5000/train')
         .then(res => {
@@ -41,25 +44,75 @@ const WebcamCapture = () => {
   //     setRead(true)
   //     setStatus('GenFrame: start')
   //   }
-
+  // })
 
   const genFrame = React.useCallback(() => {
     setStatus('Detect')
-    var square = document.getElementById("square")
+    setMatching('')
     const imageSrc = webcamRef.current.getScreenshot();
+    var frameContainer = []
     axios.post('http://127.0.0.1:5000/genframe', {data : imageSrc})
         .then(res => {
-          setFaceData(res.data)
-          square.style.borderStyle = "solid"
-          setRe("found['"+res.data['name']+"']")
+          if (res.data['name'].length === 0) {
+            setRe("face_not_found")
+          } else {
+            frameContainer = createFrameDiv(res.data)
+
+            ReactDOM.render(
+              frameContainer,
+              document.getElementById('frame')
+            )
+            setRe("found['"+res.data['name']+"']")
+            
+            if (res.data['name'].length > 1) {
+              if (res.data['name'][0] === res.data['name'][1]) {
+                setMatching('MATCH')
+              } else {
+                setMatching('UNMATCH')
+              }
+            }
+          }
+          
     })
         .catch(error => {
-          square.style.borderStyle = ""
-          setFaceData({name: ''})
-          // setRe(`error = ${error}`)
-          setRe("face_not_found")
+          setRe(`error = ${error}`)
+          // setRe("face_not_found")
     })
   },[webcamRef]);
+
+  function createFrameDiv(data) {
+    const frameList = []
+    const labelList = []
+    var fullList = []
+    for (var i=0; i<data['name'].length; i++) {
+      const frame = React.createElement('div', 
+                                      {style: {
+                                        position: 'absolute',
+                                        borderColor: "red",
+                                        borderStyle: 'solid',
+                                        top: (data['top'][i]+50)+"px",
+                                        left: (data['left'][i]+15)+"px",
+                                        width: (data['right'][i]-data['left'][i])+"px",
+                                        height: (data['bottom'][i]-data['top'][i])+"px",
+                                        }
+                                      })
+      const label = React.createElement('p', 
+                                      {id: "label"+i
+                                        ,style: {
+                                        position: 'absolute',
+                                        color: 'red',
+                                        top: (data['bottom'][i]+50)+"px",
+                                        left: (data['right'][i])+"px",
+                                      }
+                                    }, data['name'][i])                                       
+      frameList[i] = frame
+      labelList[i] = label
+    }
+    fullList = [new Set([frameList, labelList])]
+    const frameContainer = React.createElement('div',{id: "frameContainer"},fullList)
+    return frameContainer
+
+  }
 
   const addModel = React.useCallback((event) => {
     const imageList = []
@@ -68,7 +121,7 @@ const WebcamCapture = () => {
     setStatus("Add Model")
     event.preventDefault()
   
-    if (name=='') {
+    if (name==='') {
       setRe("Error: Name cannot be empty")
     } else {
       setRe("collecting model...")
@@ -89,29 +142,20 @@ const WebcamCapture = () => {
   return (
   <div>
     <div>
-      <div
-        id="square" 
-        style={{
-          position: 'absolute',
-          borderColor: "red",
-          borderStyle: '',
-          top: `${faceData.top+50}px`,
-          left: `${faceData.left+15}px`,
-          width: `${faceData.right-faceData.left}px`,
-          height: `${faceData.bottom-faceData.top}px`,
-        }}
-      />
-      <p
-        id="label"
-        style={{
-          position: 'absolute',
-          color: 'red',
-          top: `${faceData.bottom+50}px`,
-          left: `${faceData.right}px`,
-        }}
-      >
-        {faceData.name}
-      </p>
+      <div id="frame">
+        <p
+          id="label"
+          style={{
+            position: 'absolute',
+            color: 'red',
+            top: `${faceData.bottom+50}px`,
+            left: `${faceData.right}px`,
+          }}
+        >
+          {faceData.name}
+        </p>
+      </div>
+      
       <Webcam
         hidden={false}
         style={{zIndex:-1}}
@@ -137,11 +181,12 @@ const WebcamCapture = () => {
       <button onClick={genFrame}>Detect</button>
       <h2>Menu: {status}</h2>
       <p>Status: {re}</p>
-      <h3>Face Data:</h3>
-      <p>Name: {faceData.name}</p>
+      {/* <h3>Face Data:</h3>
+      <p>Name: {faceData.name}</p> */}
       {/* <h4>Position:</h4>
       <p>Top: {faceData.top} Bottom: {faceData.bottom}</p>
       <p>Left: {faceData.left} Right: {faceData.right}</p> */}
+      <p style={{color: "red", fontSize: "20px"}}>{matching}</p>
     </div>
   </div>
 	);

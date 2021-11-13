@@ -36,7 +36,7 @@ def genFrame():
     data = request.get_json()['data']
 
     resp = FaceRec.gen_frames(data)
-
+    print(resp)
     return resp
 
 @app.route('/addmodel', methods=['POST','GET'])
