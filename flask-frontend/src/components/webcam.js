@@ -21,63 +21,43 @@ const WebcamCapture = () => {
   })
   const[name, setName] = useState("")
 
-  const capture = React.useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    console.log(`imageSrc = ${imageSrc}`)
-                //for deployment, you should put your backend url / api
-    axios.post('http://127.0.0.1:5000/api', {data : imageSrc})
-    	  .then(res => {
-      	  console.log(`response = ${res.data}`)
-      	  setRe(res.data)
-    })
-    	  .catch(error => {
-      	  console.log(`error = ${error}`)
-    })
-  }, 
-   [webcamRef]
-  );
-
   const train = React.useCallback(() => {
-    setStatus('Train')
+    setStatus('Train Model')
     setRe('training...')
     axios.get('http://127.0.0.1:5000/train')
         .then(res => {
           setRe(res.data)
     })
         .catch(error => {
-          setRe(`error = ${error}`)
+          setRe("Error: Model not found or incompatible")
     })
   });
 
-  const runGenFrame = React.useCallback(() => {
-    if (read) {
-      setRead(false)
-      setStatus('GenFrame: stop')
-    } else {
-      setRead(true)
-      setStatus('GenFrame: start')
-    }
-    while (read) {
-      setTimeout(() => {  console.log("World!"); }, 5000);
-      genFrame()
-    }
-  })
+  // const runGenFrame = React.useCallback(() => {
+  //   if (read) {
+  //     setRead(false)
+  //     setStatus('GenFrame: stop')
+  //   } else {
+  //     setRead(true)
+  //     setStatus('GenFrame: start')
+  //   }
+
 
   const genFrame = React.useCallback(() => {
-    setStatus('Gen Frame')
+    setStatus('Detect')
     var square = document.getElementById("square")
-    var label = document.getElementById("label")
     const imageSrc = webcamRef.current.getScreenshot();
     axios.post('http://127.0.0.1:5000/genframe', {data : imageSrc})
         .then(res => {
-          setRe("Complete!")
           setFaceData(res.data)
           square.style.borderStyle = "solid"
+          setRe("found['"+res.data['name']+"']")
     })
         .catch(error => {
           square.style.borderStyle = ""
           setFaceData({name: ''})
-          setRe(`error = ${error}`)
+          // setRe(`error = ${error}`)
+          setRe("face_not_found")
     })
   },[webcamRef]);
 
@@ -85,30 +65,26 @@ const WebcamCapture = () => {
     const imageList = []
     var IMAGE_COUNT = 5
 
-    for (var i=0; i<IMAGE_COUNT; i++) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      imageList[i] = imageSrc
-    }
     setStatus("Add Model")
-    setRe('collecting model...')
     event.preventDefault()
-    axios.post('http://127.0.0.1:5000/addmodel', {data: imageList, name: name})
-        .then(res => {
-          setRe(res.data)
-    })
-        .catch(error => {
-          setRe(`error = ${error}`)
-        })
+  
+    if (name=='') {
+      setRe("Error: Name cannot be empty")
+    } else {
+      setRe("collecting model...")
+      for (var i=0; i<IMAGE_COUNT; i++) {
+        const imageSrc = webcamRef.current.getScreenshot();
+        imageList[i] = imageSrc
+      } 
+      axios.post('http://127.0.0.1:5000/addmodel', {data: imageList, name: name})
+          .then(res => {
+            setRe(res.data)
+      })
+          .catch(error => {
+            setRe(`error = ${error}`)
+      })
+    }
   });
-
-  const waifu = React.useCallback(() => {
-    setStatus("Hoshimachi Sui-chan")
-    setRe("Kyoumo Kawaii!!!!!")
-    var square = document.getElementById("square")
-    var label = document.getElementById("label")
-    setFaceData({name: "Best Girl!", top: 128, bottom: 223, left: 270, right: 378})
-    square.style.borderStyle = 'solid'  
-  })
 
   return (
   <div>
@@ -122,7 +98,7 @@ const WebcamCapture = () => {
           top: `${faceData.top+50}px`,
           left: `${faceData.left+15}px`,
           width: `${faceData.right-faceData.left}px`,
-          height: `${faceData.top}px`,
+          height: `${faceData.bottom-faceData.top}px`,
         }}
       />
       <p
@@ -158,15 +134,14 @@ const WebcamCapture = () => {
         <button type="submit">Add Model</button>
       </form>
       <button onClick={train}>Train</button>
-      <button onClick={genFrame}>Gen frames</button>
-      <button onClick={waifu} hidden={0}>Detect</button>
-      <h2>Status: {status}</h2>
-      <p>Return: {re}</p>
+      <button onClick={genFrame}>Detect</button>
+      <h2>Menu: {status}</h2>
+      <p>Status: {re}</p>
       <h3>Face Data:</h3>
       <p>Name: {faceData.name}</p>
-      <h4>Position:</h4>
+      {/* <h4>Position:</h4>
       <p>Top: {faceData.top} Bottom: {faceData.bottom}</p>
-      <p>Left: {faceData.left} Right: {faceData.right}</p>
+      <p>Left: {faceData.left} Right: {faceData.right}</p> */}
     </div>
   </div>
 	);

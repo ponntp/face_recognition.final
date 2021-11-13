@@ -16,12 +16,6 @@ import pathlib
 from pathlib import Path
 
 class FaceRec:
-    def getTxt():
-        return "from face_rec when t"
-
-    def getTxt2():
-        return "from face_rec when f"
-
     def train(train_dir, model_save_path=None, n_neighbors=None, knn_algo='ball_tree', verbose=False):
         """
         Trains a k-nearest neighbors classifier for face recognition.
@@ -94,7 +88,7 @@ class FaceRec:
 
         predictions = predict("hi", img, model_path="trained_knn_model.clf")
         # k = cv2.waitKey(100) & 0xff  # Press 'ESC' for exiting video
-        # print(predictions)
+        print(predictions)
 
         match = ""
         for name, (top, right, bottom, left) in predictions:
