@@ -1,54 +1,55 @@
-# from flask import Flask, request
-# from flask_cors import CORS
-# import json
-# from face_rec import FaceRec, rodrigo
-# from PIL import Image
-# import base64
-# import io
-# import os
-# import shutil
-# import time
+from flask import Flask, request, Response
+from flask_cors import CORS
+import json
+from face_rec import FaceRec
+from PIL import Image
+import base64
+import io
+import os
+import shutil
+import time
+import cv2
+import numpy as np
+from imageio import imread
 
+app = Flask(__name__)
+CORS(app)
 
-# app = Flask(__name__)
-# CORS(app)
+@app.route('/test', methods=['POST', 'GET'])
+def test():
+    data = request.get_json()
+    if (data['data'] == False):
+        resp = FaceRec.getTxt()
+    else:
+        resp = FaceRec.getTxt2()
 
+    return resp
 
-# @app.route('/api', methods=['POST', 'GET'])
-# def api():
-# 	data = request.get_json()
-# 	resp = 'Nobody'
-# 	directory = './stranger'
-# 	if data:
-# 		if os.path.exists(directory):
-# 			shutil.rmtree(directory)
+@app.route('/train', methods=['GET'])
+def train():
+    classifier = FaceRec.train("knn_examples/train", model_save_path="trained_knn_model.clf", n_neighbors=2)
+    # print(classifier)
+    return 'Training Complete!'
 
-# 		if not os.path.exists(directory):
-# 			try:
-# 				os.mkdir(directory)
-# 				time.sleep(1)
-# 				result = data['data']
-# 				b = bytes(result, 'utf-8')
-# 				image = b[b.find(b'/9'):]
-# 				im = Image.open(io.BytesIO(base64.b64decode(image)))
-# 				im.save(directory+'/stranger.jpeg')
+@app.route('/genframe', methods=['POST','GET'])
+def genFrame():
+    data = request.get_json()['data']
 
-# 				if your-name.recognize_faces() == 'your-name':
-# 					resp = 'your-name'
-# 				else:
-# 					resp = 'Nobody'
-# 			except:
-# 				pass
-# 	return resp
+    resp = FaceRec.gen_frames(data)
 
+    return resp
 
-	
+@app.route('/addmodel', methods=['POST','GET'])
+def addModel():
+    data = request.get_json()['data']
+    name = request.get_json()['name']
+    count = 0
 
+    for image in data:
+        FaceRec.add_model(name, image, count)
+        count+=1
 
+    return "Complete!"
 
-
-
-
-
-# if __name__ == '__main__':
-# 	app.run()
+if __name__ == '__main__':
+    app.run()
