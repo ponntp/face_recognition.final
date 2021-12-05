@@ -1,6 +1,5 @@
-
 .Title{
-    background-color: black;
+    background-color: whitesmoke;
     border-radius: 10px;
     color: #FDB827;
     max-width: 500px;
@@ -13,5 +12,5 @@
     padding: 10px;
     padding-right: 30px;
     padding-left: 110px;
-   
+    border: 10px solid #FDB827
 }

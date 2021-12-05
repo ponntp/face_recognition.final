@@ -196,7 +196,7 @@ const WebcamCapture = () => {
                 hidden={false}
                 style={{
                   zIndex: -1,
-                  backgroundColor: "#000",
+                  backgroundColor: "whitesmoke",
                   padding: "15px",
                   border: "5px solid #FDB827",
                 }}
@@ -212,7 +212,7 @@ const WebcamCapture = () => {
               <div
                 
                 style={{
-                  backgroundColor: "#000",
+                  backgroundColor: "whitesmoke",
                   padding: "15px",
                
                   marginLeft: "50px",
@@ -248,7 +248,7 @@ const WebcamCapture = () => {
             </td>
             <td>
               <img
-                style={{ width: "300px", heigh: "354px", marginLeft: "70px", marginTop: "0px"}}
+                style={{ width: "300px",height: "354x", marginLeft: "70px"}}
                 src={logo}
               />
             </td>
