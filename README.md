@@ -5,6 +5,7 @@
 ### Install
     npm install axios
     npm install react-webcam
+    npm install react-bootstrap bootstrap@5.1.3
 ### Run
     npm start
 

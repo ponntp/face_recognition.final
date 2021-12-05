@@ -9,10 +9,10 @@
     font-size: 22px;
     padding: 10px;
     margin: 2px;
-    background-color: rgba(197, 197, 197, 0.438);
+    background-color: gainsboro;
     border-radius: 25px;
     border: 5px ;
-    color: black;
+    color: #FDB827;
     margin-left: 90px;
     margin-top: 20px;
     font-family: Malgun Gothic;
@@ -43,20 +43,24 @@
 }
 
 .Status{
+    margin-top: 5px;
     padding: 10px;
     font-weight: 500;
     margin-left: 90px;
     font-family: Malgun Gothic;
+    color: #FDB827;
 }
 .Detect{
+    margin-top: 5px;
     padding: 10px;
     font-weight: 500;
     margin-left: 90px;
     font-family: Malgun Gothic;
+    color: #FDB827;
 }
 body{
-    background-color: #FBFFE2;
-    
+    background-image: url("./wall.jpg");
+  
 }
 
 .column {

@@ -1,23 +1,19 @@
-import React, {Component} from 'react';
-import Webcam from 'react-webcam';
-import WebcamCapture from './components/webcam.js';
-
+import React, { Component } from "react";
+import Webcam from "react-webcam";
+import WebcamCapture from "./components/webcam.js";
+import "./components/styles2.css"
 
 class App extends Component {
-
   render() {
-
     return (
       <div>
-        <div className='head'>
-          <h2>Live Face Recognition run on the Web</h2>
-        </div>
-        <WebcamCapture/>
+        
+          <p className="Title">Face Recognition  </p>
+      
+        <WebcamCapture />
       </div>
-      )
+    );
   }
 }
-
-
 
 export default App;

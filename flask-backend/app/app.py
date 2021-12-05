@@ -1,17 +1,35 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask_cors import CORS
+import json
 from face_rec import FaceRec
-
+from PIL import Image
+import base64
+import io
+import os
+import shutil
+import time
+import cv2
+import numpy as np
+from imageio import imread
 
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/test', methods=['POST', 'GET'])
+def test():
+    data = request.get_json()
+    if (data['data'] == False):
+        resp = FaceRec.getTxt()
+    else:
+        resp = FaceRec.getTxt2()
+
+    return resp
 
 @app.route('/train', methods=['GET'])
 def train():
     classifier = FaceRec.train("knn_examples/train", model_save_path="trained_knn_model.clf", n_neighbors=2)
     # print(classifier)
-    return 'Training Complete!'
+    return 'Add Face Success!'
 
 @app.route('/genframe', methods=['POST','GET'])
 def genFrame():
@@ -32,10 +50,6 @@ def addModel():
         count+=1
 
     return "Complete!"
-
-@app.route('/test', methods=['POST','GET'])
-def test():
-    return "Working!"
 
 if __name__ == '__main__':
     app.run()

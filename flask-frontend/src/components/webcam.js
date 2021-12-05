@@ -4,6 +4,7 @@ import Webcam from "react-webcam";
 import ReactDOM from "react-dom";
 import "./styles.css";
 import logo from "./manual.png";
+import Table from "react-bootstrap/Table";
 
 const WebcamCapture = () => {
   const webcamRef = React.useRef(null);
@@ -28,7 +29,7 @@ const WebcamCapture = () => {
   // const [url, setUrl] = useState(`http://127.0.0.1:5000/`);
 
   const train = React.useCallback(() => {
-    setStatus("training...");
+    setStatus("Train Model");
     setName("");
     axios
       .get(url + "/train")
@@ -61,7 +62,7 @@ const WebcamCapture = () => {
           frameContainer = createFrameDiv(res.data);
 
           ReactDOM.render(frameContainer, document.getElementById("frame"));
-          setRe(  res.data["name"]+"," );
+          setRe(res.data["name"] + ",");
 
           if (res.data["name"].length > 1) {
             if (res.data["name"][0] === res.data["name"][1]) {
@@ -88,7 +89,7 @@ const WebcamCapture = () => {
           position: "absolute",
           borderColor: "#49FF00",
           borderStyle: "solid",
-          top: data["top"][i] + 50 + "px",
+          top: data["top"][i] + 100 + "px",
           left: data["left"][i] + 15 + "px",
           width: data["right"][i] - data["left"][i] + "px",
           height: data["bottom"][i] - data["top"][i] + "px",
@@ -102,9 +103,8 @@ const WebcamCapture = () => {
             fontSize: "25px",
             position: "absolute",
             color: "#49FF00",
-            top: data["bottom"][i]  +25+ "px",
-            left: data["left"][i]  +25+"px",
-            
+            top: data["bottom"][i] + 75 + "px",
+            left: data["left"][i] + 25 + "px",
           },
         },
         data["name"][i]
@@ -172,80 +172,89 @@ const WebcamCapture = () => {
 
   return (
     <div>
-      <div className="row">
-        <div className="column">
-          <div id="frame">
-            <p
-              id="label"
-              style={{
-                position: "absolute",
-                color: "red",
-                top: `${faceData.bottom + 50}px`,
-                left: `${faceData.right}px`,
-              }}
-            >
-              {faceData.name}
-            </p>
-          </div>
-          <Webcam
-            hidden={false}
-            style={{
-              zIndex: -1,
-              backgroundColor: "#fff",
-              padding: "15px",
-              border: "5px solid #FF5403",
-            }}
-            audio={false}
-            height={400}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            width={550}
-            videoConstraints={videoConstraints}
-          />
-        </div>
+      <Table striped bordered hover>
+        <thead>
+          <br />
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div id="frame">
+                <p
+                  id="label"
+                  style={{
+                    position: "absolute",
+                    color: "red",
+                    top: `${faceData.bottom + 50}px`,
+                    left: `${faceData.right}px`,
+                  }}
+                >
+                  {faceData.name}
+                </p>
+              </div>
+              <Webcam
+                hidden={false}
+                style={{
+                  zIndex: -1,
+                  backgroundColor: "#000",
+                  padding: "15px",
+                  border: "5px solid #FDB827",
+                }}
+                audio={false}
+                height={400}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                width={550}
+                videoConstraints={videoConstraints}
+              />
+            </td>
+            <td>
+              <div
+                
+                style={{
+                  backgroundColor: "#000",
+                  padding: "15px",
+               
+                  marginLeft: "50px",
+                  width: "500px",
+                  height: "400px",
+                  border: "5px solid #FDB827",
+                }}
+              >
+                <form onSubmit={addModel}>
+                  <input
+                    className="Input"
+                    placeholder="Input your name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </form>
+                <button className="ButtonAdd" onClick={addModel} type="submit">
+                  Add Face
+                </button>
 
-        <div className="column">
-          <img style={{width: "65%",marginLeft: "115px",marginTop: "10px"}}src={logo} />
-        </div>
-
-        <div
-          className="column"
-          style={{
-            backgroundColor: "#fff",
-            padding: "15px",
-            marginTop: "10px",
-            width: "500px",
-            height: "400px",
-            border: "5px solid #FF5403",
-         
-          }}
-        >
-          <form onSubmit={addModel}>
-            <input
-              className="Input"
-              placeholder="Input your name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          
-          </form>
-          <button className="ButtonAdd" onClick={addModel} type="submit" >
-              Add Face
-            </button>
-          
-          <button className="ButtonTrain" onClick={train}>
-            Register Face
-          </button>
-          {/* <button onClick={genFrame}>Detect</button> */}
-          {/*<button className="ButtonTest" onClick={test}>
+                <button className="ButtonTrain" onClick={train}>
+                  Register Face
+                </button>
+                {/* <button onClick={genFrame}>Detect</button> */}
+                {/*<button className="ButtonTest" onClick={test}>
                 Test
                       </button>*/}
-          <h2 className="Status"> STATUS: {status}</h2>
-          <h2 className="Detect">DETECT: {re}</h2>
-          <h6 className="MatchingText">{matching}</h6>
-        </div>
-      </div>
+                <h3 className="Status"> STATUS: {status}</h3>
+                <h3 className="Detect">DETECT: {re}</h3>
+                <h6 className="MatchingText">{matching}</h6>
+              </div>
+            </td>
+            <td>
+              <img
+                style={{ width: "300px", heigh: "354px", marginLeft: "70px", marginTop: "0px"}}
+                src={logo}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </Table>
     </div>
   );
 };
