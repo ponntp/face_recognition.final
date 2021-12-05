@@ -7,7 +7,6 @@ from PIL import Image, ImageDraw
 import base64
 import io
 import numpy as np
-import torch
 import face_recognition
 from face_recognition.face_recognition_cli import image_files_in_folder
 import cv2

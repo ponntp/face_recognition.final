@@ -1,0 +1,17 @@
+
+.Title{
+    background-color: #FF5403;
+    border-radius: 10px;
+    color: whitesmoke;
+    max-width: 500px;
+    margin: auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-family: Malgun Gothic;
+    font-size: 36px;
+    font-weight: 800;
+    padding: 10px;
+    padding-right: 30px;
+    padding-left: 110px;
+   
+}

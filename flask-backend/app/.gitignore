@@ -1,0 +1,4 @@
+venv
+knn_examples
+__pycache__
+trained_knn_model.clf
